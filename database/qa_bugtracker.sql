@@ -1,41 +1,43 @@
+-- Create database
 CREATE DATABASE IF NOT EXISTS qa_bugtracker;
+
 USE qa_bugtracker;
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    role ENUM('admin', 'developer', 'tester') DEFAULT 'tester',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  role ENUM('QA','Developer','Admin') NOT NULL
 );
 
 -- Bugs table
 CREATE TABLE IF NOT EXISTS bugs (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL,
-    priority ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium',
-    status ENUM('open', 'in_progress', 'resolved', 'closed') DEFAULT 'open',
-    reported_by INT,
-    assigned_to INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (reported_by) REFERENCES users(id),
-    FOREIGN KEY (assigned_to) REFERENCES users(id)
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+  severity ENUM('Critical','High','Medium','Low') NOT NULL,
+  priority ENUM('High','Medium','Low') NOT NULL,
+  status ENUM('New','Assigned','In Progress','Fixed','Retest','Closed','Reopened') DEFAULT 'New',
+  assigned_to INT,
+  created_by INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (assigned_to) REFERENCES users(id),
+  FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
 -- Comments table
 CREATE TABLE IF NOT EXISTS comments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    bug_id INT NOT NULL,
-    user_id INT NOT NULL,
-    comment TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (bug_id) REFERENCES bugs(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  bug_id INT NOT NULL,
+  user_id INT NOT NULL,
+  message TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (bug_id) REFERENCES bugs(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Sample Data (Optional)
--- INSERT INTO users (username, email, password, role) VALUES ('admin', 'admin@example.com', 'hashed_password', 'admin');
+-- Sample QA user
+INSERT INTO users (name, email, password, role)
+VALUES ('Namal Ekanayake', 'namal@example.com', 'test123', 'QA');
