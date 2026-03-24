@@ -1,6 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 const authRoutes = require("./routes/auth");
 const bugRoutes = require("./routes/bugs");
@@ -18,4 +20,4 @@ app.get("/", (req, res) => {
     res.send("QA Bug Tracker Backend Running");
 });
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
